@@ -16,8 +16,7 @@ queue_t *q_new()
         q->head = NULL;
         q->tail = NULL;
     }
-    /* If malloc returned NULL, this function returns NULL */
-    return q;
+    return q; /* If malloc returned NULL, this function returns NULL */
 }
 
 /* Free all storage used by queue */
@@ -36,6 +35,20 @@ void q_free(queue_t *q)
     free(q);
 }
 
+static inline bool ele_new(char *s, list_ele_t **newh, char **value)
+{
+    *newh = malloc(sizeof(list_ele_t));
+    *value = strdup(s); /* Allocate space for the string and copy it */
+
+    /* If either call to malloc returns NULL */
+    if (*newh == NULL || *value == NULL) {
+        if (*newh) free(*newh);
+        if (*value) free(*value);
+        return false;
+    }
+    return true;
+}
+
 /*
  * Attempt to insert element at head of queue.
  * Return true if successful.
@@ -45,17 +58,12 @@ void q_free(queue_t *q)
  */
 bool q_insert_head(queue_t *q, char *s)
 {
-    /* If the q is NULL */
     if (q == NULL) return false;
-    list_ele_t *newh = malloc(sizeof(list_ele_t));
-    /* Allocate space for the string and copy it */
-    char *value = strdup(s);
-    /* If either call to malloc returns NULL */
-    if (newh == NULL || value == NULL) {
-        if (newh) free(newh);
-        if (value) free(value);
-        return false;
-    }
+    list_ele_t *newh;
+    char *value;
+    if (!ele_new(s, &newh, &value)) return false;
+
+    /* set up the element and insert at the head of the queue*/
     newh->value = value;
     newh->next = q->head;
     q->head = newh;
@@ -72,17 +80,12 @@ bool q_insert_head(queue_t *q, char *s)
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
-    /* If the q is NULL */
     if (q == NULL) return false;
-    list_ele_t *newh = malloc(sizeof(list_ele_t));
-    /* Allocate space for the string and copy it */
-    char *value = strdup(s);
-    /* If either call to malloc returns NULL */
-    if (newh == NULL || value == NULL) {
-        if (newh) free(newh);
-        if (value) free(value);
-        return false;
-    }
+    list_ele_t *newh;
+    char *value;
+    if (!ele_new(s, &newh, &value)) return false;
+
+    /* set up the element and insert at the tail of the queue */
     newh->value = value;
     newh->next = NULL;
     if (q->tail != NULL) q->tail->next = newh;
