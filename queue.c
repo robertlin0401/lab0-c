@@ -20,7 +20,15 @@ queue_t *q_new()
 /* Free all storage used by queue */
 void q_free(queue_t *q)
 {
-    /* TODO: How about freeing the list elements and the strings? */
+    /* No effect if q is NULL */
+    if (q == NULL) return;
+    /* Free the list elements and the strings */
+    while (q->head) {
+        list_ele_t *target = q->head;
+        q->head = target->next;
+        free(target->value);
+        free(target);
+    }
     /* Free queue structure */
     free(q);
 }
