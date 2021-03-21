@@ -108,7 +108,7 @@ bool q_insert_tail(queue_t *q, char *s)
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
     if (q == NULL || q->head == NULL) return false;
-    if (sp != NULL) sp = strdup(q->head->value);
+    if (sp != NULL) sp = strndup(q->head->value, bufsize-1);
     list_ele_t *target = q->head;
     if (q->head == q->tail)
         q->head = q->tail = NULL;
