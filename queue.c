@@ -15,6 +15,7 @@ queue_t *q_new()
     if (q != NULL) {
         q->head = NULL;
         q->tail = NULL;
+        q->size = 0;
     }
     return q; /* If malloc returned NULL, this function returns NULL */
 }
@@ -68,6 +69,7 @@ bool q_insert_head(queue_t *q, char *s)
     newh->next = q->head;
     q->head = newh;
     if (q->tail == NULL) q->tail = newh;
+    q->size++;
     return true;
 }
 
@@ -91,6 +93,7 @@ bool q_insert_tail(queue_t *q, char *s)
     if (q->tail != NULL) q->tail->next = newh;
     else q->head = newh;
     q->tail = newh;
+    q->size++;
     return true;
 }
 
@@ -113,6 +116,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
         q->head = q->head->next;
     free(target->value);
     free(target);
+    q->size--;
     return true;
 }
 
