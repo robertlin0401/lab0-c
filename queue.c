@@ -152,12 +152,62 @@ void q_reverse(queue_t *q)
 }
 
 /*
+ * Sort elements of linked list in ascending order using recursive quick sort
+ * @param head - a pointer to the pointer to head of the list
+ */
+void q_ele_quicksort(list_ele_t **head)
+{
+    if (*head == NULL) return;
+
+    list_ele_t *pivot, *left = NULL, *right = NULL;
+    list_ele_t *target, *left_end = NULL, *right_end = NULL;
+    pivot = *head;
+    target = pivot->next;
+    pivot->next = NULL;
+    while (target != NULL) {
+        if (strcmp(target->value, pivot->value) <= 0) {
+            if (left == NULL)
+                left = target;
+            else
+                left_end->next = target;
+            left_end = target;
+            target = target->next;
+            left_end->next = NULL;
+        } else {
+            if (right == NULL)
+                right = target;
+            else
+                right_end->next = target;
+            right_end = target;
+            target = target->next;
+            right_end->next = NULL;
+        }
+    }
+
+    q_ele_quicksort(&left);
+    q_ele_quicksort(&right);
+
+    if (left != NULL) {
+        *head = left;
+        while (left->next != NULL) left = left->next;
+        left->next = pivot;
+    } else {
+        *head = pivot;
+    }
+    pivot->next = right;
+}
+
+/*
  * Sort elements of queue in ascending order
  * No effect if q is NULL or empty. In addition, if q has only one
  * element, do nothing.
  */
 void q_sort(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
+    if (q == NULL || q->head == NULL) return;
+    if (q->size == 1) {
+        /* no-op */
+        return;
+    }
+    q_ele_quicksort(&(q->head));
 }
