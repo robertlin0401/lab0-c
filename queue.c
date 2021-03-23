@@ -24,7 +24,8 @@ queue_t *q_new()
 void q_free(queue_t *q)
 {
     /* No effect if q is NULL */
-    if (q == NULL) return;
+    if (q == NULL)
+        return;
     /* Free the list elements and the strings */
     while (q->head) {
         list_ele_t *target = q->head;
@@ -43,8 +44,10 @@ static inline bool ele_new(char *s, list_ele_t **newh, char **value)
 
     /* If either call to malloc returns NULL */
     if (*newh == NULL || *value == NULL) {
-        if (*newh) free(*newh);
-        if (*value) free(*value);
+        if (*newh)
+            free(*newh);
+        if (*value)
+            free(*value);
         return false;
     }
     return true;
@@ -59,16 +62,19 @@ static inline bool ele_new(char *s, list_ele_t **newh, char **value)
  */
 bool q_insert_head(queue_t *q, char *s)
 {
-    if (q == NULL) return false;
+    if (q == NULL)
+        return false;
     list_ele_t *newh;
     char *value;
-    if (!ele_new(s, &newh, &value)) return false;
+    if (!ele_new(s, &newh, &value))
+        return false;
 
     /* set up the element and insert at the head of the queue*/
     newh->value = value;
     newh->next = q->head;
     q->head = newh;
-    if (q->tail == NULL) q->tail = newh;
+    if (q->tail == NULL)
+        q->tail = newh;
     q->size++;
     return true;
 }
@@ -82,16 +88,20 @@ bool q_insert_head(queue_t *q, char *s)
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
-    if (q == NULL) return false;
+    if (q == NULL)
+        return false;
     list_ele_t *newh;
     char *value;
-    if (!ele_new(s, &newh, &value)) return false;
+    if (!ele_new(s, &newh, &value))
+        return false;
 
     /* set up the element and insert at the tail of the queue */
     newh->value = value;
     newh->next = NULL;
-    if (q->tail != NULL) q->tail->next = newh;
-    else q->head = newh;
+    if (q->tail != NULL)
+        q->tail->next = newh;
+    else
+        q->head = newh;
     q->tail = newh;
     q->size++;
     return true;
@@ -107,8 +117,14 @@ bool q_insert_tail(queue_t *q, char *s)
  */
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
-    if (q == NULL || q->head == NULL) return false;
-    if (sp != NULL) sp = strndup(q->head->value, bufsize-1);
+    if (q == NULL || q->head == NULL)
+        return false;
+    if (sp != NULL) {
+        int length = strlen(q->head->value);
+        length = (bufsize - 1 >= length) ? length : bufsize - 1;
+        strncpy(sp, q->head->value, length);
+        *(sp + length) = '\0';
+    }
     list_ele_t *target = q->head;
     if (q->head == q->tail)
         q->head = q->tail = NULL;
@@ -141,7 +157,8 @@ int q_size(queue_t *q)
  */
 void q_reverse(queue_t *q)
 {
-    if (q == NULL || q->head == NULL) return;
+    if (q == NULL || q->head == NULL)
+        return;
     q->tail = q->head;
     while (q->tail->next != NULL) {
         list_ele_t *target = q->tail->next;
@@ -157,7 +174,8 @@ void q_reverse(queue_t *q)
  */
 void q_ele_quicksort(list_ele_t **head)
 {
-    if (*head == NULL) return;
+    if (*head == NULL)
+        return;
 
     list_ele_t *pivot, *left = NULL, *right = NULL;
     list_ele_t *target, *left_end = NULL, *right_end = NULL;
@@ -189,7 +207,8 @@ void q_ele_quicksort(list_ele_t **head)
 
     if (left != NULL) {
         *head = left;
-        while (left->next != NULL) left = left->next;
+        while (left->next != NULL)
+            left = left->next;
         left->next = pivot;
     } else {
         *head = pivot;
@@ -204,7 +223,8 @@ void q_ele_quicksort(list_ele_t **head)
  */
 void q_sort(queue_t *q)
 {
-    if (q == NULL || q->head == NULL) return;
+    if (q == NULL || q->head == NULL)
+        return;
     if (q->size == 1) {
         /* no-op */
         return;
