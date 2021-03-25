@@ -171,10 +171,11 @@ void q_reverse(queue_t *q)
 /*
  * Sort elements of linked list in ascending order using recursive quick sort
  * @param head - a pointer to the pointer to head of the list
+ * @param tail - a pointer to the pointer to tail of the list
  */
-void q_ele_quicksort(list_ele_t **head)
+void q_ele_quicksort(list_ele_t **head, list_ele_t **tail)
 {
-    if (*head == NULL)
+    if (*head == *tail)
         return;
 
     list_ele_t *pivot, *left = NULL, *right = NULL;
@@ -202,18 +203,17 @@ void q_ele_quicksort(list_ele_t **head)
         }
     }
 
-    q_ele_quicksort(&left);
-    q_ele_quicksort(&right);
+    q_ele_quicksort(&left, &left_end);
+    q_ele_quicksort(&right, &right_end);
 
     if (left != NULL) {
         *head = left;
-        while (left->next != NULL)
-            left = left->next;
-        left->next = pivot;
+        left_end->next = pivot;
     } else {
         *head = pivot;
     }
     pivot->next = right;
+    *tail = (right_end == NULL) ? pivot : right_end;
 }
 
 /*
@@ -229,5 +229,5 @@ void q_sort(queue_t *q)
         /* no-op */
         return;
     }
-    q_ele_quicksort(&(q->head));
+    q_ele_quicksort(&(q->head), &(q->tail));
 }
