@@ -169,51 +169,51 @@ void q_reverse(queue_t *q)
 }
 
 /*
- * Sort elements of linked list in ascending order using recursive quick sort
+ * Sort elements of linked list in ascending order using recursive radix sort
  * @param head - a pointer to the pointer to head of the list
  * @param tail - a pointer to the pointer to tail of the list
+ * @param index - the index of character in string now checking
  */
-void q_ele_quicksort(list_ele_t **head, list_ele_t **tail)
+void q_ele_radixsort(list_ele_t **head, list_ele_t **tail, int index)
 {
     if (*head == *tail)
         return;
 
-    list_ele_t *pivot, *left = NULL, *right = NULL;
-    list_ele_t *target, *left_end = NULL, *right_end = NULL;
-    pivot = *head;
-    target = pivot->next;
-    pivot->next = NULL;
+    list_ele_t *bucket_head[27], *bucket_tail[27];
+    list_ele_t *target = *head;
+    for (int iter = 0; iter < 27; ++iter)
+        bucket_head[iter] = bucket_tail[iter] = NULL;
+    
     while (target != NULL) {
-        if (strcmp(target->value, pivot->value) <= 0) {
-            if (left == NULL)
-                left = target;
-            else
-                left_end->next = target;
-            left_end = target;
-            target = target->next;
-            left_end->next = NULL;
-        } else {
-            if (right == NULL)
-                right = target;
-            else
-                right_end->next = target;
-            right_end = target;
-            target = target->next;
-            right_end->next = NULL;
+        int charCode = (int)(target->value[index]);
+        charCode = (charCode == 0) ? 0 : charCode - 'a' + 1;
+        if (bucket_head[charCode] == NULL)
+            bucket_head[charCode] = target;
+        else
+            bucket_tail[charCode]->next = target;
+        bucket_tail[charCode] = target;
+        target = target->next;
+        bucket_tail[charCode]->next = NULL;
+    }
+
+    for (int iter = 1; iter < 27; ++iter) {
+        if (bucket_head[iter] != bucket_tail[iter])
+            q_ele_radixsort(&bucket_head[iter], &bucket_tail[iter], index + 1);
+    }
+
+    bool isHead = true;
+    for (int iter = 0; iter < 27; ++iter) {
+        if (bucket_head[iter] != NULL) {
+            if (isHead) {
+                *head = bucket_head[iter];
+                isHead = false;
+            } else {
+                (*tail)->next = bucket_head[iter];
+            }
+            *tail = bucket_tail[iter];
         }
     }
 
-    q_ele_quicksort(&left, &left_end);
-    q_ele_quicksort(&right, &right_end);
-
-    if (left != NULL) {
-        *head = left;
-        left_end->next = pivot;
-    } else {
-        *head = pivot;
-    }
-    pivot->next = right;
-    *tail = (right_end == NULL) ? pivot : right_end;
 }
 
 /*
@@ -229,5 +229,5 @@ void q_sort(queue_t *q)
         /* no-op */
         return;
     }
-    q_ele_quicksort(&(q->head), &(q->tail));
+    q_ele_radixsort(&(q->head), &(q->tail), 0);
 }
