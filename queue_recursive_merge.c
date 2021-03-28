@@ -200,23 +200,27 @@ void frontBackSplit(list_ele_t *source,
 
 list_ele_t *sortedMerge(list_ele_t *a, list_ele_t *b)
 {
-    // base cases
-    if (a == NULL)
-        return b;
+    list_ele_t *result = NULL, *tail = NULL;
 
-    else if (b == NULL)
-        return a;
-
-    list_ele_t *result = NULL;
-
-    // pick either `a` or `b`, and recur
-    if (strcmp(a->value, b->value) <= 0) {
-        result = a;
-        result->next = sortedMerge(a->next, b);
-    } else {
-        result = b;
-        result->next = sortedMerge(a, b->next);
+    while (a != NULL && b != NULL) {
+        if (strcmp(a->value, b->value) <= 0) {
+            if (result == NULL)
+                result = a;
+            else
+                tail->next = a;
+            tail = a;
+            a = a->next;
+        } else {
+            if (result == NULL)
+                result = b;
+            else
+                tail->next = b;
+            tail = b;
+            b = b->next;
+        }
+        tail->next = NULL;
     }
+    tail->next = (a != NULL) ? a : b;
 
     return result;
 }
