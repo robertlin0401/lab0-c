@@ -172,13 +172,6 @@ void frontBackSplit(list_ele_t *source,
                     list_ele_t **frontRef,
                     list_ele_t **backRef)
 {
-    // if the length is less than 2, handle it separately
-    if (source == NULL || source->next == NULL) {
-        *frontRef = source;
-        *backRef = NULL;
-        return;
-    }
-
     list_ele_t *slow = source;
     list_ele_t *fast = source->next;
 
