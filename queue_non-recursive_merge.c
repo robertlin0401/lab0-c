@@ -180,16 +180,22 @@ void q_ele_mergesort(queue_t *q)
         list_ele_t *buf = q->head;
         bool init = true;
         while (ptr != NULL) {
-            list_ele_t *a = ptr;
-            for (int j = 0; j < i; j++) {
-                if (ptr == NULL)
+            list_ele_t *a = ptr, *a_tail = NULL;
+            for (int j = 0; j < i - 1; j++) {
+                if (ptr->next == NULL)
                     break;
                 ptr = ptr->next;
             }
-            list_ele_t *b = ptr;
-            for (int j = 0; j < i; j++) {
-                if (ptr == NULL)
-                    break;
+            a_tail = ptr;
+            ptr = ptr->next;
+            list_ele_t *b = ptr, *b_tail = NULL;
+            if (ptr != NULL) {
+                for (int j = 0; j < i - 1; j++) {
+                    if (ptr->next == NULL)
+                        break;
+                    ptr = ptr->next;
+                }
+                b_tail = ptr;
                 ptr = ptr->next;
             }
 
@@ -219,22 +225,18 @@ void q_ele_mergesort(queue_t *q)
             }
 
             if (a_count == i) {
-                while (b_count < i && b != NULL) {
+                if (b != NULL) {
                     buf->next = b;
-                    buf = b;
-                    b = b->next;
-                    q->tail = buf;
+                    buf = b_tail;
+                    q->tail = b_tail;
                     q->tail->next = NULL;
-                    b_count++;
                 }
             } else {
-                while (a_count < i && a != NULL) {
+                if (a != NULL) {
                     buf->next = a;
-                    buf = a;
-                    a = a->next;
-                    q->tail = buf;
+                    buf = a_tail;
+                    q->tail = a_tail;
                     q->tail->next = NULL;
-                    a_count++;
                 }
             }
         }
