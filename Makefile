@@ -3,7 +3,7 @@ CFLAGS = -O1 -g -Wall -Werror -Idudect -I.
 
 GIT_HOOKS := .git/hooks/applied
 DUT_DIR := dudect
-all: $(GIT_HOOKS) qtest
+all: $(GIT_HOOKS) qtest gen
 
 tid := 0
 
@@ -69,6 +69,9 @@ valgrind: valgrind_existence
 	@echo
 	@echo "Test with specific case by running command:" 
 	@echo "scripts/driver.py -p $(patched_file) --valgrind -t <tid>"
+
+gen: gen_testcase.c
+	gcc $^ -lm -o $@
 
 clean:
 	rm -f $(OBJS) $(deps) *~ qtest /tmp/qtest.*

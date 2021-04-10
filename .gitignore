@@ -1,4 +1,6 @@
 qtest
+gen
+traces/test.cmd
 *.o
 *.o.d
 *.dSYM
